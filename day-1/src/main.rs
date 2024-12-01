@@ -1,4 +1,4 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
 fn main() {
     println!("Hello.\n");
@@ -21,11 +21,16 @@ fn main() {
             x.1.trim().parse::<i32>().unwrap()
         })
         .collect();
-    a.sort();
-    b.sort();
+    // a.sort();
+    // b.sort();
+
+    let freq = b.iter().copied().fold(HashMap::new(), |mut map, val| {
+        map.entry(val).and_modify(|f| *f += 1).or_insert(1);
+        map
+    });
     let mut ans = 0;
     for i in 0..a.len() {
-        ans = ans + (a[i] - b[i]).abs();
+        ans = ans + a[i] * freq.get(&a[i]).unwrap_or(&0);
         // println!(
         //     "Ans itr {}, a[i] = {}, b[i] = {}, ans = {}",
         //     i, a[i], b[i], ans
