@@ -1,4 +1,4 @@
-use std::fs;
+use std::{env, fs};
 
 fn test(arr: &Vec<Vec<char>>, x: usize, y: usize, i: i32, j: i32) -> bool {
     // println!("x = {}, y = {}, i = {}, j = {}", x, y, i, j);
@@ -21,6 +21,25 @@ fn test(arr: &Vec<Vec<char>>, x: usize, y: usize, i: i32, j: i32) -> bool {
     return false;
 }
 
+fn testX(arr: &Vec<Vec<char>>, x: usize, y: usize) -> bool {
+    if (arr[x][y] != 'A') {
+        return false;
+    }
+    println!("x+1 = {}", x + 1);
+    println!("y+1 = {}", y + 1);
+    if !(arr[x - 1][y - 1] == 'M' && arr[x + 1][y + 1] == 'S'
+        || arr[x - 1][y - 1] == 'S' && arr[x + 1][y + 1] == 'M')
+    {
+        return false;
+    }
+    if !(arr[x + 1][y - 1] == 'M' && arr[x - 1][y + 1] == 'S'
+        || arr[x + 1][y - 1] == 'S' && arr[x - 1][y + 1] == 'M')
+    {
+        return false;
+    }
+    return true;
+}
+
 fn main() {
     let filename = "src/in";
     let content = fs::read_to_string(filename).expect("Should have been able to read the file");
@@ -31,31 +50,16 @@ fn main() {
         .collect();
 
     let mut ans = 0;
-    for i in 0..arr.len() {
-        for j in 0..arr[i].len() {
-            // println!("Itre: x = {}, y = {}", i, j);
-            if test(&arr, i, j, 1, 0) {
-                ans += 1;
-            }
-            if test(&arr, i, j, 0, 1) {
-                ans += 1;
-            }
-            if test(&arr, i, j, 1, 1) {
-                ans += 1;
-            }
-            if test(&arr, i, j, -1, 0) {
-                ans += 1;
-            }
-            if test(&arr, i, j, 0, -1) {
-                ans += 1;
-            }
-            if test(&arr, i, j, -1, -1) {
-                ans += 1;
-            }
-            if test(&arr, i, j, 1, -1) {
-                ans += 1;
-            }
-            if test(&arr, i, j, -1, 1) {
+    for i in 1..(arr.len() - 1) {
+        for j in 1..(arr[i].len() - 1) {
+            println!(
+                "Itre: x = {}, y = {}, arr.len = {}, arr[i].len() = {}",
+                i,
+                j,
+                arr.len(),
+                arr[i].len()
+            );
+            if testX(&arr, i, j) {
                 ans += 1;
             }
         }
