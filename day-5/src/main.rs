@@ -1,4 +1,4 @@
-use std::fs;
+use std::{cmp::Ordering, fs};
 
 fn read_input() -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
     let filename = "src/in";
@@ -12,8 +12,6 @@ fn read_input() -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
     let mut updates: Vec<Vec<i32>> = vec![];
     for i in 0..lines.len() {
         let line = lines[i].trim();
-        println!("Processing line: {} {}", i, line.len());
-        println!("Content: '{}'", line);
         if line.len() == 5 {
             let nums = line
                 .split_once("|")
@@ -28,7 +26,7 @@ fn read_input() -> (Vec<(i32, i32)>, Vec<Vec<i32>>) {
     (order, updates)
 }
 
-fn check_input(input: (Vec<(i32, i32)>, Vec<Vec<i32>>)) {
+fn check_input(input: &(Vec<(i32, i32)>, Vec<Vec<i32>>)) {
     let (order, updates) = input;
     println!("Rules:");
     for rule in order {
@@ -45,10 +43,13 @@ fn check_input(input: (Vec<(i32, i32)>, Vec<Vec<i32>>)) {
 }
 
 fn main() {
-    let (order, updates) = read_input();
+    let (_order, _updates) = read_input();
+    let order = _order.clone();
+    let updates = _updates.clone();
 
     let mut ans = 0;
-    for arr in updates {
+    let mut ans2 = 0;
+    for mut arr in updates {
         let mut good = true;
         for i in 0..arr.len() {
             let x = arr[i];
@@ -71,10 +72,31 @@ fn main() {
         }
         if good {
             ans += arr[arr.len() / 2];
+        } else {
+            arr.sort_by(|a, b| {
+                for rule in &order {
+                    if rule.0 == a.abs() && rule.1 == b.abs() {
+                        return Ordering::Less;
+                    }
+                    if rule.1 == a.abs() && rule.0 == b.abs() {
+                        return Ordering::Greater;
+                    }
+                }
+
+                return Ordering::Equal;
+            });
+
+            print!("Arr: ");
+            for x in &arr {
+                print!("{} ", x);
+            }
+            println!("");
+            ans2 += arr[arr.len() / 2];
+            // wrong_updates.push(arr);
         }
     }
 
-    println!("Ans: {}", ans);
+    println!("Ans: {}", ans2);
 
-    // check_input((order, updates));
+    // check_input(order, updates);
 }
